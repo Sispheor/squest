@@ -13,13 +13,6 @@ When using Kubernetes, the configuration need to be placed in the `squest.yml` i
 
 Set the database root/superuser password
 
-### DATABASE
-
-**Default:** `default`
-
-Setup mysql database usage
-Set to `psql` for postgres SQL usage
-
 ### DB_DATABASE
 
 **Default:** `squest_db`
@@ -47,9 +40,9 @@ Switch to `db` in production when using the docker-compose based deployment.
 
 ### DB_PORT
 
-**Default:** `3306`
+**Default:** `5432`
 
-Database port.
+Default postgres database port.
 
 
 ## Authentication

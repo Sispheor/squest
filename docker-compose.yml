@@ -1,14 +1,27 @@
 # docker compose -f docker-compose.yml up
 services:
 
+#  db:
+#    image: mariadb:11.0.2
+#    env_file: docker/environment_variables/db.env
+#    volumes:
+#      - db_data:/var/lib/mysql
+#      - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
+#    healthcheck:
+#      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+#      start_period: 10s
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
   db:
-    image: mariadb:11.0.2
+    image: postgres:17
     env_file: docker/environment_variables/db.env
+    ports:
+      - 5432:5432
     volumes:
-      - db_data:/var/lib/mysql
-      - "./docker/scripts/mariadb-init.sh:/docker-entrypoint-initdb.d/db-init.sh"
+      - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD-SHELL", "pg_isready"]
       start_period: 10s
       interval: 10s
       timeout: 5s

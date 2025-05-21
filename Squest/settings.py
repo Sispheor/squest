@@ -29,7 +29,7 @@ DB_DATABASE = os.environ.get('DB_DATABASE', 'squest_db')
 DB_USER = os.environ.get('DB_USER', 'squest_user')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'squest_password')
 DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
-DB_PORT = os.environ.get('DB_PORT', '3306')
+DB_PORT = os.environ.get('DB_PORT', '5432')
 LDAP_ENABLED = str_to_bool(os.environ.get('LDAP_ENABLED', False))
 SOCIAL_AUTH_OIDC_ENABLED = str_to_bool(os.environ.get('SOCIAL_AUTH_OIDC_ENABLED', False))
 SOCIAL_AUTH_OIDC_BTN_TEXT = os.environ.get('SOCIAL_AUTH_OIDC_BTN_TEXT', 'OpenID Login')
@@ -159,15 +159,6 @@ WSGI_APPLICATION = 'Squest.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': "django.db.backends.mysql",
-        'NAME': DB_DATABASE,
-        'USER': DB_USER,
-        'PASSWORD': DB_PASSWORD,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-        'OPTIONS': {'charset': 'utf8mb4'}
-    },
-    'psql': {
         'ENGINE': "django.db.backends.postgresql",
         'NAME': DB_DATABASE,
         'USER': DB_USER,
@@ -176,8 +167,6 @@ DATABASES = {
         'PORT': DB_PORT,
     }
 }
-
-DATABASE_ROUTERS = ['Squest.db_router.DbRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -458,14 +447,16 @@ DBBACKUP_CLEANUP_KEEP = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
 DBBACKUP_CLEANUP_KEEP_MEDIA = int(os.environ.get('DBBACKUP_CLEANUP_KEEP', 5))
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {'location': 'backup'}
-mysqldump_major_version = get_mysql_dump_major_version()
-print(f"mysqldump major version: {mysqldump_major_version}")
-if mysqldump_major_version < 10:
-    DBBACKUP_CONNECTORS = {
-        'default': {
-            'DUMP_SUFFIX': '--no-tablespaces --column-statistics=0',
-        }
-    }
+
+# mysqldump_major_version = get_mysql_dump_major_version()
+# print(f"mysqldump major version: {mysqldump_major_version}")
+# if mysqldump_major_version < 10:
+#     DBBACKUP_CONNECTORS = {
+#         'default': {
+#             'DUMP_SUFFIX': '--no-tablespaces --column-statistics=0',
+#         }
+#     }
+
 if BACKUP_ENABLED:
     CELERY_BEAT_SCHEDULE["perform_backup"] = {
         "task": "service_catalog.tasks.perform_backup",

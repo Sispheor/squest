@@ -30,7 +30,7 @@ class Doc(SquestModel):
 
     class Meta(SquestModel.Meta):
         ordering = ['title']
-        
+
 
     def __str__(self):
         return self.title

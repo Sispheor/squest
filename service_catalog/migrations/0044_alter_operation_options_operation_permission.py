@@ -3,6 +3,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 import service_catalog.models.operations
+from Squest.settings import TESTING
 
 
 def set_perm_to_operations(apps, schema_editor):
@@ -35,7 +36,9 @@ class Migration(migrations.Migration):
             name='permission',
             field=models.ForeignKey(blank=True, limit_choices_to={'content_type__app_label': 'service_catalog', 'content_type__model': 'operation'}, help_text='Permission to view the operation. Evaluated only at Global Scope and Default Permission level',null=True, on_delete=django.db.models.deletion.PROTECT, related_name='operation', to='profiles.permission'),
         ),
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE;' if not TESTING else ''),
         migrations.RunPython(set_perm_to_operations),
+        migrations.RunSQL('SET CONSTRAINTS ALL DEFERRED;'  if not TESTING else ''),
         migrations.AlterField(
             model_name='operation',
             name='permission',

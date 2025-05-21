@@ -4,6 +4,8 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 
+from Squest.settings import TESTING
+
 
 def billing_group_to_org(apps, schema_editor):
     Role = apps.get_model('profiles', 'Role')
@@ -76,7 +78,9 @@ class Migration(migrations.Migration):
             old_name='spoc',
             new_name='requester',
         ),
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE;' if not TESTING else ''),
         migrations.RunPython(create_default_org),
+        migrations.RunSQL('SET CONSTRAINTS ALL DEFERRED;'  if not TESTING else ''),
         migrations.AddField(
             model_name='instance',
             name='quota_scope',
@@ -84,8 +88,10 @@ class Migration(migrations.Migration):
                                     on_delete=django.db.models.deletion.PROTECT, related_name='quota_instances',
                                     related_query_name='quota_instance', to='profiles.scope'),
         ),
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE;' if not TESTING else ''),
         migrations.RunPython(assign_default_to_instances),
         migrations.RunPython(billing_group_to_org),
+        migrations.RunSQL('SET CONSTRAINTS ALL DEFERRED;'  if not TESTING else ''),
         migrations.AlterField(
             model_name='instance',
             name='quota_scope',
@@ -103,5 +109,7 @@ class Migration(migrations.Migration):
             model_name='instance',
             name='billing_group',
         ),
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE;' if not TESTING else ''),
         migrations.RunPython(remove_default_org_if_unused),
+        migrations.RunSQL('SET CONSTRAINTS ALL DEFERRED;'  if not TESTING else ''),
     ]
